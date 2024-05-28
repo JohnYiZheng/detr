@@ -1,0 +1,1 @@
+python main.py --coco_path ~/Data/COCO --device mps

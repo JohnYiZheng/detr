@@ -75,6 +75,13 @@ class BackboneBase(nn.Module):
         for name, x in xs.items():
             m = tensor_list.mask
             assert m is not None
+            # 添加批次维度：将二维掩码 m 转换为三维掩码 [1, H, W]。
+            # 类型转换：将布尔类型的掩码转换为浮点数类型，以便后续的插值操作。
+            # 插值：根据特征图 x 的高度和宽度调整掩码的尺寸，使其匹配特征图的尺寸。
+            # 类型转换：将插值后的浮点数掩码转换回布尔类型。
+            # 移除批次维度：将三维掩码 [1, new_H, new_W] 转换回二维掩码 [new_H, new_W]。
+            # 为什么要先升维再降维？
+            # 对于二维插值，输入的张量维度至少为 4 维。
             mask = F.interpolate(m[None].float(), size=x.shape[-2:]).to(torch.bool)[0]
             out[name] = NestedTensor(x, mask)
         return out

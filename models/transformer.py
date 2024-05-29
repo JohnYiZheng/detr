@@ -48,9 +48,9 @@ class Transformer(nn.Module):
         # flatten NxCxHxW to HWxNxC
         bs, c, h, w = src.shape
         src = src.flatten(2).permute(2, 0, 1)
-        pos_embed = pos_embed.flatten(2).permute(2, 0, 1)
-        query_embed = query_embed.unsqueeze(1).repeat(1, bs, 1)
-        mask = mask.flatten(1)
+        pos_embed = pos_embed.flatten(2).permute(2, 0, 1)  # [884, 2, 256]
+        query_embed = query_embed.unsqueeze(1).repeat(1, bs, 1)  # [100, 2, 256]
+        mask = mask.flatten(1)  # [2, 884]
 
         tgt = torch.zeros_like(query_embed)
         memory = self.encoder(src, src_key_padding_mask=mask, pos=pos_embed)

@@ -323,7 +323,7 @@ def nested_tensor_from_tensor_list(tensor_list: List[Tensor]):
         mask = torch.ones((b, h, w), dtype=torch.bool, device=device)
         for img, pad_img, m in zip(tensor_list, tensor, mask):
             pad_img[: img.shape[0], : img.shape[1], : img.shape[2]].copy_(img)
-            m[: img.shape[1], :img.shape[2]] = False
+            m[: img.shape[1], :img.shape[2]] = False  # 将有效区域设置为False
     else:
         raise ValueError('not supported')
     return NestedTensor(tensor, mask)

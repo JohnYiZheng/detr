@@ -6,10 +6,14 @@ mask参与了pos embed的计算，对于pad部分忽略，pos embed对应元素�
 ### pos embed参与了transformer里面的哪些计算？
 encoder和decoder都会输入
 ### encoder的pos embed作用
+对特征图特征赋值位置信息
 
 ### decoder的pos和query pos的区别
+两种不同作用的位置编码
+query_pos包含了特定查询的**语义信息**
 
 ### transformer中的tgt是干什么用的？
+真正的查询序列，组合query_pos后，作为解码器的实际序列
 
 ### encoder中mask和src_key_padding_mask有什么区别
 先回顾一下naive transformer和vit中encoder做了什么

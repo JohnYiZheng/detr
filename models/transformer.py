@@ -47,7 +47,7 @@ class Transformer(nn.Module):
     def forward(self, src, mask, query_embed, pos_embed):
         # flatten NxCxHxW to HWxNxC
         bs, c, h, w = src.shape
-        src = src.flatten(2).permute(2, 0, 1)
+        src = src.flatten(2).permute(2, 0, 1)  # start dim = 2，从第二维开始展平，到最后一维 [844(34 * 26), 2, 256]
         pos_embed = pos_embed.flatten(2).permute(2, 0, 1)  # [884, 2, 256]
         query_embed = query_embed.unsqueeze(1).repeat(1, bs, 1)  # [100, 2, 256]
         mask = mask.flatten(1)  # [2, 884]
@@ -151,7 +151,7 @@ class TransformerEncoderLayer(nn.Module):
                      src_mask: Optional[Tensor] = None,
                      src_key_padding_mask: Optional[Tensor] = None,
                      pos: Optional[Tensor] = None):
-        q = k = self.with_pos_embed(src, pos)
+        q = k = self.with_pos_embed(src, pos)  # 注意这里指对q和k做pos embed
         src2 = self.self_attn(q, k, value=src, attn_mask=src_mask,
                               key_padding_mask=src_key_padding_mask)[0]
         src = src + self.dropout1(src2)
@@ -166,7 +166,7 @@ class TransformerEncoderLayer(nn.Module):
                     src_key_padding_mask: Optional[Tensor] = None,
                     pos: Optional[Tensor] = None):
         src2 = self.norm1(src)
-        q = k = self.with_pos_embed(src2, pos)
+        q = k = self.with_pos_embed(src2, pos)  # 注意这里指对q和k做pos embed
         src2 = self.self_attn(q, k, value=src2, attn_mask=src_mask,
                               key_padding_mask=src_key_padding_mask)[0]
         src = src + self.dropout1(src2)
@@ -216,12 +216,12 @@ class TransformerDecoderLayer(nn.Module):
                      memory_key_padding_mask: Optional[Tensor] = None,
                      pos: Optional[Tensor] = None,
                      query_pos: Optional[Tensor] = None):
-        q = k = self.with_pos_embed(tgt, query_pos)
+        q = k = self.with_pos_embed(tgt, query_pos)  # 注意这里指对q和k做pos embed
         tgt2 = self.self_attn(q, k, value=tgt, attn_mask=tgt_mask,
                               key_padding_mask=tgt_key_padding_mask)[0]
         tgt = tgt + self.dropout1(tgt2)
         tgt = self.norm1(tgt)
-        tgt2 = self.multihead_attn(query=self.with_pos_embed(tgt, query_pos),
+        tgt2 = self.multihead_attn(query=self.with_pos_embed(tgt, query_pos),  # 注意这里指对q和k做pos embed，q用object query做，k用pos做
                                    key=self.with_pos_embed(memory, pos),
                                    value=memory, attn_mask=memory_mask,
                                    key_padding_mask=memory_key_padding_mask)[0]

@@ -43,3 +43,5 @@ encoder：作为encoder的src_key_padding_mask输入，送入layer,最终作为�
 因此，虽然这两个参数都可以影响到注意力得分的计算，但作用的阶段和方式略有不同：`key_padding_mask` 主要在 softmax 操作前处理填充部分，而 `attn_mask` 则在 softmax 操作后对注意力权重进行调整。
 
 在transformer仓中，这两个mask都是给score赋值为负无穷，gpt答案存疑
+
+### query_embedding的size是否要随数据集的类数变化？codetr交付版要变，但是实际是否应该不变？

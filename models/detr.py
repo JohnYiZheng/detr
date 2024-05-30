@@ -61,7 +61,7 @@ class DETR(nn.Module):
         features, pos = self.backbone(samples)
         # features: [NestedTensor (tensors[2, 2048, 34, 26] mask[2, 34, 26])]
         # pos: [Tensor[2, 256, 34, 26]]
-
+        # 这里为什么features和pos 通道不一致？在build_position_encodingd时，已经设置num_pos_feats属性为args.hidden_dim // 2
         src, mask = features[-1].decompose()
         assert mask is not None
         src = self.input_proj(src)  # Tensor[2, 256, 34, 26]
@@ -71,8 +71,8 @@ class DETR(nn.Module):
         # pos_embed: pos[-1]
         # hs [6, 2, 100. 256] 6 for layer num
 
-        outputs_class = self.class_embed(hs)
-        outputs_coord = self.bbox_embed(hs).sigmoid()
+        outputs_class = self.class_embed(hs)  # [6, 2, 100, 92]
+        outputs_coord = self.bbox_embed(hs).sigmoid()  # [6, 2, 100, 4]
         out = {'pred_logits': outputs_class[-1], 'pred_boxes': outputs_coord[-1]}
         if self.aux_loss:
             out['aux_outputs'] = self._set_aux_loss(outputs_class, outputs_coord)

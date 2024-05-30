@@ -16,7 +16,7 @@ class PositionEmbeddingSine(nn.Module):
     """
     def __init__(self, num_pos_feats=64, temperature=10000, normalize=False, scale=None):
         super().__init__()
-        self.num_pos_feats = num_pos_feats  # 嵌入的维度数，默认值为64
+        self.num_pos_feats = num_pos_feats  # 嵌入的维度数，默认值为64，实际为128，注意这里是单维，x、y各128，最终会concat为128
         self.temperature = temperature  # 用于缩放位置编码的温度参数，默认值为10000
         self.normalize = normalize
         if scale is not None and normalize is False:

@@ -226,8 +226,10 @@ class SetCriterion(nn.Module):
              targets: list of dicts, such that len(targets) == batch_size.
                       The expected keys in each dict depends on the losses applied, see each loss' doc
         """
+        # outputs: {"pred_logits": Tensor[2, 100, 92], "pred_boxes": Tensor[2, 100, 4],
+        #           "aux_outputs": [{"pred_logits": ..., "pred_boxes": ...}, {}, {}, ... x5]}
         outputs_without_aux = {k: v for k, v in outputs.items() if k != 'aux_outputs'}
-
+        # targets: {'boxes', 'labels', 'image_id', 'area', 'iscrowd', 'orig_size', 'size'}
         # Retrieve the matching between the outputs of the last layer and the targets
         indices = self.matcher(outputs_without_aux, targets)
 
@@ -240,7 +242,7 @@ class SetCriterion(nn.Module):
 
         # Compute all the requested losses
         losses = {}
-        for loss in self.losses:
+        for loss in self.losses:  # ['labels', 'boxes', 'cardinality']
             losses.update(self.get_loss(loss, outputs, targets, indices, num_boxes))
 
         # In case of auxiliary losses, we repeat this process with the output of each intermediate layer.
